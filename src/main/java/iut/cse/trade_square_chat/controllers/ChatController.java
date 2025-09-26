@@ -10,7 +10,6 @@ public class ChatController {
     @MessageMapping("/chat")
     @SendTo("/topic/messages")
     public String sendMessage(@Payload String message) {
-        System.out.println("Received" + message);
         return message;
     }
 }
