@@ -1,5 +1,9 @@
 const stompClient = new StompJs.Client({
-    brokerURL: 'ws://localhost:8080/ws'
+    brokerURL: 'ws://localhost:8080/ws',
+    connectHeaders: {
+        Authorization: 'Bearer ' + 'random token' // or however you store the token
+    }
+
 });
 
 stompClient.onConnect = (frame) => {
