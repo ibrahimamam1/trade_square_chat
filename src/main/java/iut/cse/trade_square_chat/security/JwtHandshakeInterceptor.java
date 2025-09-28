@@ -14,27 +14,26 @@ import java.util.Map;
 @Component
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
     JwtService jwtService;
+
+    public JwtHandshakeInterceptor(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+
     @Override
     public boolean beforeHandshake(ServerHttpRequest request,
                                    ServerHttpResponse response,
                                    WebSocketHandler wsHandler,
                                    Map<String, Object> attributes){
 
-        if(request instanceof ServletServerHttpRequest servletRequest){
+        if(request instanceof ServletServerHttpRequest servletRequest) {
             HttpServletRequest httpServletRequest = servletRequest.getServletRequest();
-            System.out.println(httpServletRequest.getRequestURI());
-            String authHeader = httpServletRequest.getHeader("Authorization");
+            String token = httpServletRequest.getParameter("token");
 
-            if(authHeader != null && authHeader.startsWith("Bearer ")){
-                System.out.println(authHeader);
-                String token = authHeader.substring(7);
-
-                if(jwtService.isTokenValid(token)){
-                    attributes.put("token", token);
-                    return true;
-                }
+            if (token != null && jwtService.isTokenValid(token)) {
+                attributes.put("token", token);
+                return true;
             }
-            else System.out.println("Authorization header not found");
+            else System.out.println("Unauthorised token: " + token);
         }
         return false;
     }
