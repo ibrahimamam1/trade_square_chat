@@ -95,4 +95,32 @@ public class MessageService {
     public List<Message> getUnsentMessages(Long userId) {
         return messageRepository.findByReceiverIdAndStatus(userId, MessageStatus.UNSENT);
     }
+
+    public Message markMessageAsReadAndReturn(Long messageId) {
+        return messageRepository.findById(messageId).map(message -> {
+            message.setStatus(MessageStatus.READ);
+            message.setReadTimestamp(LocalDateTime.now());
+            return messageRepository.save(message);
+        }).orElse(null);
+    }
+
+    public List<Message> getConversation(Long userA, Long userB) {
+        return messageRepository.findBySenderIdAndReceiverIdOrReceiverIdAndSenderIdOrderByTimestampAsc(
+                userA, userB, userA, userB
+        );
+    }
+
+    public void deleteMessage(Long messageId) {
+        messageRepository.deleteById(messageId);
+    }
+
+    public Message updateMessage(Message edited) {
+        return messageRepository.findById(edited.getId()).map(msg -> {
+            msg.setContent(edited.getContent());
+            msg.setEdited(true);
+            return messageRepository.save(msg);
+        }).orElse(null);
+    }
+
+
 }

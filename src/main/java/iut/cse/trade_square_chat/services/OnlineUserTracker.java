@@ -27,4 +27,16 @@ public class OnlineUserTracker {
     public Set<Long> getOnlineUsers() {
         return Set.copyOf(onlineUsers);
     }
+
+
+    private final ConcurrentHashMap<Long, LocalDateTime> lastSeen = new ConcurrentHashMap<>();
+
+    public void updateLastSeen(Long userId) {
+        lastSeen.put(userId, LocalDateTime.now());
+    }
+
+    public LocalDateTime getLastSeen(Long userId) {
+        return lastSeen.get(userId);
+    }
+
 }

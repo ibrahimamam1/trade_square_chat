@@ -34,7 +34,10 @@ public class WebSocketEventListener {
             Long userIdLong = Long.parseLong(userId);
             onlineUserTracker.addUser(userIdLong);
 
-            // Send any unsent messages to the newly connected user
+            messagingTemplate.convertAndSend("/topic/status",
+                    new PresenceEvent(userIdLong, "ONLINE"));
+
+            // Send unsent messages
             List<Message> unsentMessages = messageService.getUnsentMessages(userIdLong);
             for (Message message : unsentMessages) {
                 messagingTemplate.convertAndSendToUser(
@@ -54,6 +57,11 @@ public class WebSocketEventListener {
         if (userId != null) {
             Long userIdLong = Long.parseLong(userId);
             onlineUserTracker.removeUser(userIdLong);
+
+            onlineUserTracker.updateLastSeen(userIdLong);
+
+            messagingTemplate.convertAndSend("/topic/status",
+                    new PresenceEvent(userIdLong, "OFFLINE"));
         }
     }
 }

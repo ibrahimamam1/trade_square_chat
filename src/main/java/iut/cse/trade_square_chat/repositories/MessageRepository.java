@@ -17,4 +17,11 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findByReceiverId(Long receiverId);
 
     List<Message> findBySenderId(Long senderId);
+
+    List<Message> findBySenderIdAndReceiverIdOrReceiverIdAndSenderIdOrderByTimestampAsc(
+            Long sender, Long receiver, Long receiver2, Long sender2
+    );
+
+    List<Message> findByContentContainingIgnoreCase(String keyword);
+
 }
